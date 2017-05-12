@@ -191,7 +191,7 @@ Lista aux=*p, novoNo;
                 }
 //                printf("%s\n", auxiliar);
                 novoNo->expoente=criaindice(auxiliar, j);
-                InsereLista(p, novoNo);
+                if (novoNo->expoente==0) InsereLista(p, novoNo);
                 for(k=0; k<=j; k++){
                     auxiliar[k]='\0';
                 }
@@ -372,7 +372,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="1+2x+1+x+4+2xy+3yx";
+char s[TAM_POLINOMIO]="1+2x+1+x^0+4+2xy+3yx+3";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
@@ -388,7 +388,6 @@ pExpressao x;
 //printf("%d ", test->expoente);
     return 0;
 }
-
 // --------------------------------------------------------------------------------------------
 
 /*
