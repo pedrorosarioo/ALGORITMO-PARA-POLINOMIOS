@@ -289,12 +289,12 @@ pExpressao forfree, aux=*x;
             aux->operador=c[i];
             l++;
             //flag=1;
-            if (aux->indice == 0){
+            /*if (aux->indice == 0){
                     forfree = aux;
                     aux=aux->prox;
                     excluimonomio(x, forfree);
 //                aux=aux->prox;
-            }else
+            }else*/
             aux=aux->prox;
         }
     }
@@ -373,11 +373,12 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="2x^0xyx";
+char s[TAM_POLINOMIO]="2x^0xyx+0+1+0+1+0x^0xx";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
     entrada(s, operadores, &x);
+//  printaexpressao(x);
  //   printf("%c\n", x->operador);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
