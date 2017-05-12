@@ -17,6 +17,7 @@ typedef struct NoLista{
 typedef struct termo{
 int indice; // Guarda o indice, exemplo: 2x, ele guarda o 2
 char polinomio[TAM_POLINOMIO]; // Guarda uma string contendo os termos do monomio, exemplo 2x^2y^2, ele guarda a string "x^2y^2"
+char operador;
 struct termo *prox;
 struct termo *ant;// Aponta para a proxima estrutura e a anterior da fila
 NoLista *literais; // Aponta para uma fila com os literais
@@ -30,10 +31,26 @@ int i, j=0, r=0;
         r=r+(a[i]-48)*(pow(10,j)+0.1);
         j++;
     }
-    if (r==0){
-        return 1;
-    }
+    if (n==0) return 1;
     return r;
+}
+
+void consertaexpoente(Lista *l){
+Lista aux2, aux=*l;
+int i;
+    while(aux!=NULL){
+    aux2=aux->lprox;
+        while ((aux2)&&(aux->variavel==aux2->variavel)){
+//            printf("entrei\n");
+            aux->expoente = aux->expoente+aux2->expoente;
+            aux->lprox=aux2->lprox;
+            if (aux2->lprox!=NULL) (aux2->lprox)->lant=aux;
+            free(aux2);
+            aux2=aux->lprox;
+//            printf("%d\n", aux->expoente);
+        }
+        aux=aux->lprox;
+    }
 }
 
 int contatermos(char c[]){
@@ -44,6 +61,41 @@ int cont=0, i;
         }
     }
 return cont+1;
+}
+
+void limpavariaveis(Lista *l){
+Lista aux;
+aux=*l;
+if(aux){
+    if (aux->lprox!=NULL){
+        limpavariaveis(&(aux->lprox));
+    }
+    free(aux);
+    }
+}
+
+void excluimonomio(pExpressao *p, pExpressao k){
+pExpressao aux= *p;
+if (aux){
+    while (aux!=NULL){
+        if (aux=k) break;
+        aux=aux->prox;
+    }
+    if (aux->ant==NULL){
+        printf("Entrei\n");
+        *p=aux->prox;
+        (*p)->ant=NULL;
+    }else if (aux->prox==NULL){
+        (aux->ant)->prox=aux->prox;
+    }else{
+        (aux->ant)->prox=aux->prox;
+        (aux->prox)->ant=aux->ant;
+    }
+    aux->prox=NULL;
+    aux->ant=NULL;
+    limpavariaveis(&(aux->literais));
+    free(aux);
+}
 }
 
 void InsereLista(Lista *x, Lista n){
@@ -89,6 +141,8 @@ pExpressao r, origem, aux, aux2;
             aux->prox=NULL;
             aux->ant=NULL;
             aux->literais=NULL;
+            strcpy(aux->polinomio, "\0");
+            //printf("%s\n", aux->polinomio);
   //          origem->indice=0;
         }else{
             aux2=(pExpressao)malloc(sizeof(expressao));
@@ -97,6 +151,7 @@ pExpressao r, origem, aux, aux2;
                 exit(1);
             }
             cont++;
+            strcpy(aux2->polinomio, "\0");
 //            printf("Entrou, %d \n", cont);
             aux->prox=aux2;
             aux2->prox=NULL;
@@ -201,9 +256,10 @@ void entrada(char c[], char *z, pExpressao *x){ // COLOCA INDICE E POLINOMIO NOS
 int i, j=0, k=0, l=0, flag=1;
 char v[11], in[11]="\0";
 strcpy(v, "0123456789");
-pExpressao aux=*x;
+pExpressao forfree, aux=*x;
     for (i=0; ((i<TAM_POLINOMIO)&&(c[i]!='\0')); i++){
         if (!aux) break;
+        printf("%s\n",aux->polinomio);
         if ((strchr(v, c[i]))&&(flag)){
                 in[k]=c[i];
                 k++;
@@ -212,7 +268,9 @@ pExpressao aux=*x;
                 aux->indice = criaindice(in, k);
                 flag=0;
                 k=0;
+                printf("%c\n", c[i]);
             }
+            if (c[i])
             while((c[i]!='+')&&(c[i]!='*')&&(c[i]!='-')&&(c[i]!='\0')){ // COPIA TUDO ATE ACHAR UM OPERADOR
                 aux->polinomio[j]=c[i];
                 if ((c[i]!='^')&&(strchr(v, c[i])==NULL)&&(c[i+1]!='^')){//COLOCA ^1 NOS QUE ESTÃO SEM EXPOENTE
@@ -225,9 +283,15 @@ pExpressao aux=*x;
                 //}
             }
             j=0;
-            z[l]=c[i];
+            aux->operador=c[i];
             l++;
             flag=1;
+            if (aux->indice == 0){
+                    forfree = aux;
+                    aux=aux->prox;
+                    excluimonomio(x, forfree);
+//                aux=aux->prox;
+            }else
             aux=aux->prox;
         }
     }
@@ -237,6 +301,7 @@ void listas(pExpressao *p){
 pExpressao aux=*p;
     while(aux!=NULL){
         crialista(aux->polinomio, &(aux->literais));
+        consertaexpoente(&(aux->literais));
         aux=aux->prox;
     }
 }
@@ -249,23 +314,61 @@ pExpressao aux=*p;
     }
 }
 
+void printaexpressao(pExpressao p){
+pExpressao aux;
+    for (aux=p; aux!=NULL; aux=aux->prox){
+        if(aux->indice==1){
+            printf("%s %c ", aux->polinomio, aux->operador);
+        }else
+        printf("%d%s %c ", aux->indice, aux->polinomio, aux->operador);
+    }
+}
+
 // ---------------------- FUNÇÕES PARA OPERAR AS ESTRUTURAS ------------------------------
-
-
+void termosemelhante(pExpressao *p){
+pExpressao aux, aux2, v;
+aux=*p;
+if(aux){
+    while (aux!=NULL){
+        aux2=aux->prox;
+        while (aux2!=NULL){
+            v=aux2->prox;
+            if (strcmp(aux2->polinomio, aux->polinomio)==0){
+                switch(aux->operador){
+                    case '+':
+                        aux->indice = aux->indice+aux2->indice;
+                        break;
+                    case '-':
+                        aux->indice = aux->indice-aux2->indice;
+                        break;
+                    }
+                aux->operador=aux2->operador;
+                excluimonomio(p, aux2);
+                aux2=v;
+            }else{
+                aux2=aux2->prox;
+            }
+        }
+        aux=aux->prox;
+    }
+}
+}
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="32z^322y^231113x^3332wvutsrqp^51o^3332+zeivanes^32223221";
+char s[TAM_POLINOMIO]="1+x";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
     entrada(s, operadores, &x);
-    printf("%d\n", x->indice);
+    printf("%s\n", (x->prox)->polinomio);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
-    listas(&x);
-    atualiza(&x);
-    printf("%d", (x->prox)->indice);
+//    listas(&x);
+//    atualiza(&x);
+//    termosemelhante(&x);
+//    printaexpressao(x);
+ //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
     return 0;
 }
