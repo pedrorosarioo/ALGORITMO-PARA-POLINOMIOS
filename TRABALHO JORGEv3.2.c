@@ -166,7 +166,7 @@ pExpressao r, origem, aux, aux2;
     return r;
 }
 
-void crialista(char c[1000], Lista *p){
+void crialista(char c[1000], Lista *p, pExpressao x){
 int i=0, j=0, k, flag=1;
 char *pontchar, auxiliar[100]="", auxiliar2[100]="", v[11]="0123456789";
 Lista aux=*p, novoNo;
@@ -191,7 +191,8 @@ Lista aux=*p, novoNo;
                 }
 //                printf("%s\n", auxiliar);
                 novoNo->expoente=criaindice(auxiliar, j);
-                if (novoNo->expoente==0) InsereLista(p, novoNo);
+                if (novoNo->expoente!=0) InsereLista(p, novoNo);
+                else strcpy(x->polinomio, "\0");
                 for(k=0; k<=j; k++){
                     auxiliar[k]='\0';
                 }
@@ -305,7 +306,7 @@ pExpressao forfree, aux=*x;
 void listas(pExpressao *p){
 pExpressao aux=*p;
     while(aux!=NULL){
-        crialista(aux->polinomio, &(aux->literais));
+        crialista(aux->polinomio, &(aux->literais), aux);
         consertaexpoente(&(aux->literais));
         aux=aux->prox;
     }
@@ -372,7 +373,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="1+2x+1+x^0+4+2xy+3yx+3";
+char s[TAM_POLINOMIO]="2x^0xyx";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
