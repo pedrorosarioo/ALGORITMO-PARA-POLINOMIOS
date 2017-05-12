@@ -258,14 +258,16 @@ char v[11], in[11]="\0";
 strcpy(v, "0123456789");
 pExpressao forfree, aux=*x;
     for (i=0; ((i<TAM_POLINOMIO)&&(c[i]!='\0')); i++){
+        flag=1;
         if (!aux) break;
-//        printf("%s\n",aux->polinomio);
+//        printf("%d\n",aux->indice);
         if ((strchr(v, c[i]))&&(flag)){
                 in[k]=c[i];
                 k++;
         }else{
             if (flag){
                 aux->indice = criaindice(in, k);
+//                printf("%c\n", aux->indice);
                 flag=0;
                 k=0;
 //                printf("%c\n", c[i]);
@@ -285,7 +287,7 @@ pExpressao forfree, aux=*x;
             j=0;
             aux->operador=c[i];
             l++;
-            flag=1;
+            //flag=1;
             if (aux->indice == 0){
                     forfree = aux;
                     aux=aux->prox;
@@ -294,6 +296,9 @@ pExpressao forfree, aux=*x;
             }else
             aux=aux->prox;
         }
+    }
+    if(flag){
+      aux->indice=criaindice(in, k);
     }
 }
 
@@ -367,7 +372,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="x+x+3xa+y+z+y+xa";
+char s[TAM_POLINOMIO]="1+2x+1+x+4+2xy+3yx";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
