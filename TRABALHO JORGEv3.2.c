@@ -23,7 +23,7 @@ struct termo *ant;// Aponta para a proxima estrutura e a anterior da fila
 NoLista *literais; // Aponta para uma fila com os literais
 }expressao, *pExpressao;
 
-// ------------------------- FUNÇÕES PARA PREENCHER AS ESTRUTURAS ------------------------------------------
+// ------------------------- FUNÃ‡Ã•ES PARA PREENCHER AS ESTRUTURAS ------------------------------------------
 
 int criaindice(char a[], int n){
 int i, j=0, r=0;
@@ -82,7 +82,7 @@ if (aux){
         aux=aux->prox;
     }
     if (aux->ant==NULL){
-        printf("Entrei\n");
+//        printf("Entrei\n");
         *p=aux->prox;
         (*p)->ant=NULL;
     }else if (aux->prox==NULL){
@@ -126,7 +126,7 @@ if (dep==NULL){
 }
 }
 
-pExpressao criacelulas(int n){//cria o espaço para comportar a expressão
+pExpressao criacelulas(int n){//cria o espaÃ§o para comportar a expressÃ£o
 int i, cont=0;
 pExpressao r, origem, aux, aux2;
     for(i=0; i<n; i++){
@@ -252,14 +252,14 @@ for(LIST=(*p)->literais;LIST!=NULL;LIST=LIST->lprox){
 
 
 
-void entrada(char c[], char *z, pExpressao *x){ // COLOCA INDICE E POLINOMIO NOS ESPAÇOS ALOCADOS
+void entrada(char c[], char *z, pExpressao *x){ // COLOCA INDICE E POLINOMIO NOS ESPAÃ‡OS ALOCADOS
 int i, j=0, k=0, l=0, flag=1;
 char v[11], in[11]="\0";
 strcpy(v, "0123456789");
 pExpressao forfree, aux=*x;
     for (i=0; ((i<TAM_POLINOMIO)&&(c[i]!='\0')); i++){
         if (!aux) break;
-        printf("%s\n",aux->polinomio);
+//        printf("%s\n",aux->polinomio);
         if ((strchr(v, c[i]))&&(flag)){
                 in[k]=c[i];
                 k++;
@@ -268,12 +268,12 @@ pExpressao forfree, aux=*x;
                 aux->indice = criaindice(in, k);
                 flag=0;
                 k=0;
-                printf("%c\n", c[i]);
+//                printf("%c\n", c[i]);
             }
             if (c[i])
             while((c[i]!='+')&&(c[i]!='*')&&(c[i]!='-')&&(c[i]!='\0')){ // COPIA TUDO ATE ACHAR UM OPERADOR
                 aux->polinomio[j]=c[i];
-                if ((c[i]!='^')&&(strchr(v, c[i])==NULL)&&(c[i+1]!='^')){//COLOCA ^1 NOS QUE ESTÃO SEM EXPOENTE
+                if ((c[i]!='^')&&(strchr(v, c[i])==NULL)&&(c[i+1]!='^')){//COLOCA ^1 NOS QUE ESTÃƒO SEM EXPOENTE
                     aux->polinomio[j+1]='^';
                     aux->polinomio[j+2]='1';
                     j=j+2;
@@ -318,13 +318,22 @@ void printaexpressao(pExpressao p){
 pExpressao aux;
     for (aux=p; aux!=NULL; aux=aux->prox){
         if(aux->indice==1){
+          if (strcmp(aux->polinomio, "\0")==0){ 
+            printf("%d %c ", aux->indice, aux->operador);
+          }else{
             printf("%s %c ", aux->polinomio, aux->operador);
-        }else
-        printf("%d%s %c ", aux->indice, aux->polinomio, aux->operador);
+          }
+        }else{
+          if (strcmp(aux->polinomio, "\0")==0){
+            printf("%d %c ", aux->indice, aux->operador);
+          }else{
+            printf("%d%s %c ", aux->indice, aux->polinomio, aux->operador);
+          }    
+        }
     }
-}
+  }
 
-// ---------------------- FUNÇÕES PARA OPERAR AS ESTRUTURAS ------------------------------
+// ---------------------- FUNÃ‡Ã•ES PARA OPERAR AS ESTRUTURAS ------------------------------
 void termosemelhante(pExpressao *p){
 pExpressao aux, aux2, v;
 aux=*p;
@@ -342,7 +351,9 @@ if(aux){
                         aux->indice = aux->indice-aux2->indice;
                         break;
                     }
-                aux->operador=aux2->operador;
+                if (aux2->operador!='\0'){
+                  aux->operador=aux2->operador;
+                }else (aux2->ant)->operador=aux2->operador;
                 excluimonomio(p, aux2);
                 aux2=v;
             }else{
@@ -356,18 +367,18 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="1+x";
+char s[TAM_POLINOMIO]="x+x+3xa+y+z+y+xa";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
     entrada(s, operadores, &x);
-    printf("%s\n", (x->prox)->polinomio);
+ //   printf("%c\n", x->operador);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
-//    listas(&x);
-//    atualiza(&x);
-//    termosemelhante(&x);
-//    printaexpressao(x);
+    listas(&x);
+    atualiza(&x);
+    termosemelhante(&x);
+    printaexpressao(x);
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
     return 0;
