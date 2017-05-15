@@ -207,7 +207,7 @@ Lista aux=*p, novoNo;
 
 int contalgarismos(int x){
 int cont=0;
-    while(x%10>0){
+    while((x/10>0)||(x%10>0)){
         x=x/10;
         cont++;
     }
@@ -340,6 +340,7 @@ pExpressao aux;
   }
 
 // ---------------------- FUNÇÕES PARA OPERAR AS ESTRUTURAS ------------------------------
+
 void termosemelhante(pExpressao *p){
 pExpressao aux, aux2, v;
 aux=*p;
@@ -373,17 +374,20 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="2x^0xyx+0+1+0+1+0x^0xx";
+char s[TAM_POLINOMIO]="x^10+6y+x^2";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
     entrada(s, operadores, &x);
-//  printaexpressao(x);
+//    printf("%d\n", contalgarismos(10));
+//    printaexpressao(x);
  //   printf("%c\n", x->operador);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
     listas(&x);
+//    printaexpressao(x);
     atualiza(&x);
+//    printaexpressao(x);
     termosemelhante(&x);
     printaexpressao(x);
  //   printf("%d", (x->prox)->indice);
