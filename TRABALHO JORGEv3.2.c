@@ -59,7 +59,7 @@ int cont=0, i;
 char v[]="+-*";
     for(i=0; i<strlen(c); i++){
         if ((c[i]=='+')||(c[i]=='*')||(c[i]=='-')){
-          if((i!=0)&&(strchr(v, c[i-1])))
+//          if((i!=0)&&(strchr(v, c[i-1])))
             cont++;
         }
     }
@@ -266,24 +266,27 @@ pExpressao forfree, aux=*x;
     for (i=0; ((i<TAM_POLINOMIO)&&(c[i]!='\0')); i++){
         flag=1;
         if (!aux) break;
-        if (c[i]=='-'){
+        if ((c[i]=='-')&&(aux->sinal==0))/*caso haja "-1-1"*/{
           aux->sinal=1;
           i++;
         }
 //        printf("%d\n",aux->indice);
         if ((strchr(v, c[i]))&&(flag)){
+                //printf("%c\n", c[i]);
                 in[k]=c[i];
                 k++;
         }else{
+            //printf("%c\n", c[i]);
             if (flag){
                 aux->indice = criaindice(in, k);
                 if (aux->sinal==1) aux->indice= (aux->indice)*(-1);
-                printf("%d\n", aux->indice);
+                //printf("%d\n", aux->indice);
                 flag=0;
                 k=0;
 //                printf("%c\n", c[i]);
             }
-            if (c[i])
+            //if (c[i])
+            //printf("%c\n", c[i]);
             while((c[i]!='+')&&(c[i]!='*')&&(c[i]!='-')&&(c[i]!='\0')){ // COPIA TUDO ATE ACHAR UM OPERADOR
                 aux->polinomio[j]=c[i];
                 if ((c[i]!='^')&&(strchr(v, c[i])==NULL)&&(c[i+1]!='^')){//COLOCA ^1 NOS QUE ESTÃO SEM EXPOENTE
@@ -407,14 +410,14 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="-x*-x";
+char s[TAM_POLINOMIO]="-3-1+x+y-x";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
     entrada(s, operadores, &x);
 //    printf("%d\n", contalgarismos(10));
 //    printaexpressao(x);
- //   printf("%c\n", x->operador);
+//    printf("%c\n", x->operador);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
     listas(&x);
@@ -423,7 +426,7 @@ pExpressao x;
     atualiza(&x);
 //    printaexpressao(x);
 //    arrumanegativos(&x);
-//    termosemelhante(&x);
+    termosemelhante(&x);
     printaexpressao(x);
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
