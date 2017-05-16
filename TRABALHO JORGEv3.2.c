@@ -410,7 +410,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="-3-1+x+y-x";
+char s[TAM_POLINOMIO]="-3-1+x+y-y+x";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
