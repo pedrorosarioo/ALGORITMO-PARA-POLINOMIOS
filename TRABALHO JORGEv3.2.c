@@ -315,6 +315,7 @@ pExpressao aux=*p;
 void atualiza(pExpressao *p){
 pExpressao aux=*p;
     while(aux!=NULL){
+        consertaexpoente(&(aux->literais));
         update(&aux);
         aux=aux->prox;
     }
@@ -324,7 +325,7 @@ void printaexpressao(pExpressao p){
 pExpressao aux;
     for (aux=p; aux!=NULL; aux=aux->prox){
         if(aux->indice==1){
-          if (strcmp(aux->polinomio, "\0")==0){ 
+          if (strcmp(aux->polinomio, "\0")==0){
             printf("%d %c ", aux->indice, aux->operador);
           }else{
             printf("%s %c ", aux->polinomio, aux->operador);
@@ -334,12 +335,24 @@ pExpressao aux;
             printf("%d %c ", aux->indice, aux->operador);
           }else{
             printf("%d%s %c ", aux->indice, aux->polinomio, aux->operador);
-          }    
+          }
         }
     }
   }
 
 // ---------------------- FUNÇÕES PARA OPERAR AS ESTRUTURAS ------------------------------
+void multiplica (pExpressao *p, pExpressao *q, pExpressao r){
+Lista aux=r->literais;
+    (*q)->indice= (*q)->indice * r->indice;
+    (*q)->operador=r->operador;
+    while (aux!=NULL){
+        InsereLista(&((*q)->literais), aux);
+        aux=aux->lprox;
+    }
+    r->literais=NULL;
+    excluimonomio(p, r);
+}
+
 
 void termosemelhante(pExpressao *p){
 pExpressao aux, aux2, v;
@@ -374,7 +387,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="x^10+6y+x^2";
+char s[TAM_POLINOMIO]="x*3x^13";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
@@ -385,10 +398,11 @@ pExpressao x;
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
     listas(&x);
+    multiplica(&x, &x, x->prox);
 //    printaexpressao(x);
     atualiza(&x);
 //    printaexpressao(x);
-    termosemelhante(&x);
+//    termosemelhante(&x);
     printaexpressao(x);
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
