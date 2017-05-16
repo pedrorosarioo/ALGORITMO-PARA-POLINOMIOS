@@ -56,8 +56,10 @@ int i;
 
 int contatermos(char c[]){
 int cont=0, i;
+char v[]="+-*";
     for(i=0; i<strlen(c); i++){
         if ((c[i]=='+')||(c[i]=='*')||(c[i]=='-')){
+          if((i!=0)&&(strchr(v, c[i-1])))
             cont++;
         }
     }
@@ -405,7 +407,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="-3+2+x+y-2x-4y";
+char s[TAM_POLINOMIO]="-x*-x";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
@@ -421,7 +423,7 @@ pExpressao x;
     atualiza(&x);
 //    printaexpressao(x);
 //    arrumanegativos(&x);
-    termosemelhante(&x);
+//    termosemelhante(&x);
     printaexpressao(x);
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
