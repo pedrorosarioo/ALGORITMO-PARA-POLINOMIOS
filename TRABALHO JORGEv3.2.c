@@ -21,6 +21,7 @@ char operador;
 struct termo *prox;
 struct termo *ant;// Aponta para a proxima estrutura e a anterior da fila
 NoLista *literais; // Aponta para uma fila com os literais
+int sinal;
 }expressao, *pExpressao;
 
 // ------------------------- FUNÇÕES PARA PREENCHER AS ESTRUTURAS ------------------------------------------
@@ -141,6 +142,7 @@ pExpressao r, origem, aux, aux2;
             aux->prox=NULL;
             aux->ant=NULL;
             aux->literais=NULL;
+            aux->sinal=0;
             strcpy(aux->polinomio, "\0");
             //printf("%s\n", aux->polinomio);
   //          origem->indice=0;
@@ -157,6 +159,7 @@ pExpressao r, origem, aux, aux2;
             aux2->prox=NULL;
             aux2->ant=aux;
             aux2->literais=NULL;
+            aux->sinal=0;
             aux=aux2;
     //        aux2->indice=1;
         }
@@ -261,6 +264,10 @@ pExpressao forfree, aux=*x;
     for (i=0; ((i<TAM_POLINOMIO)&&(c[i]!='\0')); i++){
         flag=1;
         if (!aux) break;
+        if (c[i]=='-'){
+          aux->sinal=1;
+          i++;
+        }
 //        printf("%d\n",aux->indice);
         if ((strchr(v, c[i]))&&(flag)){
                 in[k]=c[i];
@@ -268,7 +275,8 @@ pExpressao forfree, aux=*x;
         }else{
             if (flag){
                 aux->indice = criaindice(in, k);
-//                printf("%c\n", aux->indice);
+                if (aux->sinal==1) aux->indice= (aux->indice)*(-1);
+                printf("%d\n", aux->indice);
                 flag=0;
                 k=0;
 //                printf("%c\n", c[i]);
@@ -288,18 +296,17 @@ pExpressao forfree, aux=*x;
             j=0;
             aux->operador=c[i];
             l++;
-            //flag=1;
-            /*if (aux->indice == 0){
-                    forfree = aux;
+            if ((aux->ant)&&((aux->ant)->operador=='-')){
+                    (aux->ant)->operador='+';
+                    aux->indice=(aux->indice)*(-1);
                     aux=aux->prox;
-                    excluimonomio(x, forfree);
-//                aux=aux->prox;
-            }else*/
+            }else
             aux=aux->prox;
         }
     }
     if(flag){
       aux->indice=criaindice(in, k);
+      if (aux->sinal==1) aux->indice= (aux->indice)*(-1);
     }
 }
 
@@ -353,6 +360,17 @@ Lista aux=r->literais;
     excluimonomio(p, r);
 }
 
+/*void arrumanegativos(pExpressao *p){
+pExpressao aux=*p;
+  while (aux!=NULL){
+    printf("Entrei\n");
+    if ((aux->ant)&&((aux->ant)->operador=='-')){
+      printf("Entrei\n");
+      aux->indice=(aux->indice)*(-1);
+      (aux->ant)->operador='+';
+    }
+  }
+}*/
 
 void termosemelhante(pExpressao *p){
 pExpressao aux, aux2, v;
@@ -387,7 +405,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="x*3x^13";
+char s[TAM_POLINOMIO]="-3+2+x+y-2x-4y";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
@@ -398,11 +416,12 @@ pExpressao x;
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
     listas(&x);
-    multiplica(&x, &x, x->prox);
+//    multiplica(&x, &x, x->prox);
 //    printaexpressao(x);
     atualiza(&x);
 //    printaexpressao(x);
-//    termosemelhante(&x);
+//    arrumanegativos(&x);
+    termosemelhante(&x);
     printaexpressao(x);
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
