@@ -410,7 +410,7 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="-3-1+x+y-y-2x";
+char s[TAM_POLINOMIO]="-3-1+x+y-y-2x^0x";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
@@ -421,7 +421,7 @@ pExpressao x;
 //    printf("%c\n", x->operador);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
-//    listas(&x);
+    listas(&x);
 //    multiplica(&x, &x, x->prox);
 //    printaexpressao(x);
     atualiza(&x);
@@ -433,3 +433,4 @@ pExpressao x;
 //printf("%d ", test->expoente);
     return 0;
 }
+
