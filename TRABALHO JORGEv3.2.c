@@ -356,15 +356,18 @@ pExpressao aux;
 
 // ---------------------- FUNÇÕES PARA OPERAR AS ESTRUTURAS ------------------------------
 void multiplica (pExpressao *p, pExpressao *q, pExpressao r){
-Lista aux=r->literais;
+Lista aux=r->literais, aux2;
     (*q)->indice= (*q)->indice * r->indice;
     (*q)->operador=r->operador;
     while (aux!=NULL){
+        aux2=aux->lprox;
+        aux->lprox=NULL;
         InsereLista(&((*q)->literais), aux);
-        aux=aux->lprox;
+        aux=aux2;
     }
     r->literais=NULL;
     excluimonomio(p, r);
+    atualiza(p);
 }
 
 void soma (pExpressao *p, pExpressao *q, pExpressao r){
@@ -372,13 +375,22 @@ Lista aux=r->literais;
     if (strcmp((*q)->polinomio, r->polinomio)==0){
         if ((*q)->operador == '+') (*q)->indice = (*q)->indice + r->indice;
         else if ((*q)->operador == '-') (*q)->indice = (*q)->indice + r->indice;
-        (*q)->operador=r->operador;
+        if(r->operador!='\0') (*q)->operador=r->operador;
+        else (r->ant)->operador=r->operador;
         excluimonomio(p, r);
     }
 }
 
 void termosemelhante(pExpressao *p){
 pExpressao aux, aux2, v;
+aux=*p;
+while ((aux)&&(aux->prox != NULL)){
+    while (aux->operador=='*'){
+        multiplica(p, &aux, aux->prox);
+        printf("%s\n", aux->polinomio);
+    }
+    aux=aux->prox;
+}
 aux=*p;
 if(aux){
     while (aux!=NULL){
@@ -410,11 +422,12 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="-3-1+x+y-y-2x^0x";
+char s[TAM_POLINOMIO]="x*a+3x*y";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
     entrada(s, operadores, &x);
+//    printf("%c", x->operador);
 //    printf("%d", ((x->prox)->prox)->indice);
 //    printf("%d\n", contalgarismos(10));
 //    printaexpressao(x);
