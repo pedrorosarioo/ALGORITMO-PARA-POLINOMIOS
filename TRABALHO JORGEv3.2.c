@@ -268,7 +268,7 @@ pExpressao forfree, aux=*x;
     for (i=0; ((i<TAM_POLINOMIO)&&(c[i]!='\0')); i++){
         flag=1;
         if (!aux) break;
-        if ((c[i]=='-')&&(aux->sinal==0))/*caso haja "-1-1"*/{
+        if ((c[i]=='-')&&(aux->sinal==0)&&(k==0))/*caso haja "-1-1"*/{
           aux->sinal=1;
           i++;
         }
@@ -277,6 +277,7 @@ pExpressao forfree, aux=*x;
                 //printf("%c\n", c[i]);
                 in[k]=c[i];
                 k++;
+                l++;
         }else{
             //printf("%c\n", c[i]);
             if (flag){
@@ -302,7 +303,7 @@ pExpressao forfree, aux=*x;
             }
             j=0;
             aux->operador=c[i];
-            l++;
+            l=0;
             if ((aux->ant)&&((aux->ant)->operador=='-')){
                     (aux->ant)->operador='+';
                     aux->indice=(aux->indice)*(-1);
@@ -311,10 +312,10 @@ pExpressao forfree, aux=*x;
             aux=aux->prox;
         }
     }
-    if(flag){
+    if((flag)){
       aux->indice=criaindice(in, k);
       if (aux->sinal==1) aux->indice= (aux->indice)*(-1);
-    }if ((aux->ant)&&((aux->ant)->operador=='-')){
+    }if ((aux)&&(aux->ant)&&((aux->ant)->operador=='-')){
       (aux->ant)->operador='+';
       aux->indice=(aux->indice)*(-1);
       aux=aux->prox;
@@ -412,7 +413,7 @@ aux=*p;
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="x^0-1";
+char s[TAM_POLINOMIO]="x^0-9*10";
 char operadores[100];
 pExpressao x;
     /*scanf("%s", s);
