@@ -314,6 +314,10 @@ pExpressao forfree, aux=*x;
     if(flag){
       aux->indice=criaindice(in, k);
       if (aux->sinal==1) aux->indice= (aux->indice)*(-1);
+    }if ((aux->ant)&&((aux->ant)->operador=='-')){
+      (aux->ant)->operador='+';
+      aux->indice=(aux->indice)*(-1);
+      aux=aux->prox;
     }
 }
 
@@ -408,11 +412,11 @@ aux=*p;
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="\0";
+char s[TAM_POLINOMIO]="x^0-1";
 char operadores[100];
 pExpressao x;
-    scanf("%s", s);
-    while(strcmp(s, "FIM")!=0){
+    /*scanf("%s", s);
+    while(strcmp(s, "FIM")!=0){*/
         x=criacelulas(contatermos(s));
         entrada(s, operadores, &x);
 //    printf("%c", x->operador);
@@ -430,11 +434,10 @@ pExpressao x;
 //    arrumanegativos(&x);
         termosemelhante(&x);
         printaexpressao(x);
-        printf("\n");
+        printf("\n");/*
         scanf("%s", s);
-    }
+    }*/
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
     return 0;
 }
-
