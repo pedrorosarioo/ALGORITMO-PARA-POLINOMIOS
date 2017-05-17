@@ -59,7 +59,7 @@ int cont=0, i;
 char v[]="+-*";
     for(i=0; i<strlen(c); i++){
         if ((c[i]=='+')||(c[i]=='*')||(c[i]=='-')){
-//          if((i!=0)&&(strchr(v, c[i-1])))
+         // if((i!=0)&&(strchr(v, c[i-1])==NULL))
             cont++;
         }
     }
@@ -145,6 +145,7 @@ pExpressao r, origem, aux, aux2;
             aux->ant=NULL;
             aux->literais=NULL;
             aux->sinal=0;
+            aux->indice=0;
             strcpy(aux->polinomio, "\0");
             //printf("%s\n", aux->polinomio);
   //          origem->indice=0;
@@ -161,7 +162,8 @@ pExpressao r, origem, aux, aux2;
             aux2->prox=NULL;
             aux2->ant=aux;
             aux2->literais=NULL;
-            aux->sinal=0;
+            aux2->sinal=0;
+            aux2->indice=0;
             aux=aux2;
     //        aux2->indice=1;
         }
@@ -365,17 +367,15 @@ Lista aux=r->literais;
     excluimonomio(p, r);
 }
 
-/*void arrumanegativos(pExpressao *p){
-pExpressao aux=*p;
-  while (aux!=NULL){
-    printf("Entrei\n");
-    if ((aux->ant)&&((aux->ant)->operador=='-')){
-      printf("Entrei\n");
-      aux->indice=(aux->indice)*(-1);
-      (aux->ant)->operador='+';
+void soma (pExpressao *p, pExpressao *q, pExpressao r){
+Lista aux=r->literais;
+    if (strcmp((*q)->polinomio, r->polinomio)==0){
+        if ((*q)->operador == '+') (*q)->indice = (*q)->indice + r->indice;
+        else if ((*q)->operador == '-') (*q)->indice = (*q)->indice + r->indice;
+        (*q)->operador=r->operador;
+        excluimonomio(p, r);
     }
-  }
-}*/
+}
 
 void termosemelhante(pExpressao *p){
 pExpressao aux, aux2, v;
@@ -410,17 +410,18 @@ if(aux){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="-3-1+x+y-y+x";
+char s[TAM_POLINOMIO]="-3-1+x+y-y-2x";
 char operadores[100];
 pExpressao x;
     x=criacelulas(contatermos(s));
     entrada(s, operadores, &x);
+//    printf("%d", ((x->prox)->prox)->indice);
 //    printf("%d\n", contalgarismos(10));
 //    printaexpressao(x);
 //    printf("%c\n", x->operador);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
-    listas(&x);
+//    listas(&x);
 //    multiplica(&x, &x, x->prox);
 //    printaexpressao(x);
     atualiza(&x);
@@ -432,120 +433,3 @@ pExpressao x;
 //printf("%d ", test->expoente);
     return 0;
 }
-// --------------------------------------------------------------------------------------------
-
-/*
-void inicializa(Lista *x){
-    *x=NULL;
-}
-
-void InsereLista(Lista *x, int n){
-Lista aux, ant=NULL, dep=*x;
-
-aux=(Lista)malloc(sizeof(NoLista));
-if (aux==NULL) return 0;
-aux->chave=n;
-if (dep==NULL){
-    *x=aux;
-    aux->prox=NULL;
-    return 1;
-}else{
-    while (dep!=NULL){
-        if (aux->chave<dep->chave)break;
-        ant=dep;
-        dep=dep->prox;
-    }
-    if (ant==NULL){
-        aux->prox=*x;
-        *x=aux;
-    }else{
-        aux->prox=ant->prox;
-        ant->prox=aux;
-    }
-}
-return 1;
-}
-
-Lista BuscaLista(Lista *x, int n){
-Lista aux;
-    for (aux=*x; aux!=NULL; aux=aux->prox){
-        if (aux->chave==n){
-            return aux;
-        }
-    }
-return NULL;
-}
-
-int ExcluiLista(Lista *x, int n){
-Lista ant=NULL, aux=*x;
-if ((BuscaLista(x, n))){
-    while (aux!=BuscaLista(x, n)){
-        ant=aux;
-        aux=aux->prox;
-    }
-    if (ant==NULL){
-        *x=aux->prox;
-        free(aux);";
-    }else{
-        ant->prox=aux->prox;
-        free(aux);
-    }
-    return 1;
-}
-return 0;
-}
-
-int main(){
-int p;
-Lista x;
-inicializa(&x);
-p=InsereLista(&x, 1);
-p=InsereLista(&x, 3);
-p=InsereLista(&x, 2);
-printf ("%d %d %d %d\n", BuscaLista(&x, 1),BuscaLista(&x, 2), BuscaLista(&x, 3), BuscaLista(&x, 4));
-printf ("%d %d ", ExcluiLista(&x, 3), ExcluiLista(&x, 2));
-return 0;
-}
-*/
-
-
-/*int i, cont1=0, cont=0;
-Lista origem, aux, aux2, r;
-    for(i=0; c[i]!='\0'; i++){
-        if (c[i]=='^'){
-            cont1++;
-        }
-    }
-
-    for(i=0; i<cont1; i++){
-        if (i==0){
-            origem=(Lista)malloc(sizeof(NoLista));
-            if(origem==NULL){
-                printf("SEM MEMORIA\n");
-                exit(1);
-            }
-            cont++;
-            aux=origem;
-            aux->lprox=NULL;
-            aux->lant=NULL;
-            aux->expoente=0;
-  //          origem->indice=0;
-        }else{
-            aux2=(Lista)malloc(sizeof(NoLista));
-            if(aux2==NULL){
-                printf("SEM MEMORIA\n");
-                exit(1);
-            }
-            cont++;
-//            printf("Entrou, %d \n", cont);
-            aux->lprox=aux2;
-            aux2->lprox=NULL;
-            aux2->lant=aux;
-            aux=aux2;
-            aux->expoente=1;
-    //        aux2->indice=1;
-        }
-    }
-    printf("%d celulas criadas\n", cont);
-    r=origem;
-    return r;*/
