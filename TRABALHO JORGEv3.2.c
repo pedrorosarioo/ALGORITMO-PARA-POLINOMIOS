@@ -378,6 +378,7 @@ Lista aux=r->literais;
         if(r->operador!='\0') (*q)->operador=r->operador;
         else (r->ant)->operador=r->operador;
         excluimonomio(p, r);
+        atualiza(p);
     }
 }
 
@@ -387,46 +388,33 @@ aux=*p;
 while ((aux)&&(aux->prox != NULL)){
     while (aux->operador=='*'){
         multiplica(p, &aux, aux->prox);
-        printf("%s\n", aux->polinomio);
+//        printf("%s\n", aux->polinomio);
     }
     aux=aux->prox;
 }
 aux=*p;
-if(aux){
     while (aux!=NULL){
         aux2=aux->prox;
         while (aux2!=NULL){
             v=aux2->prox;
-            if (strcmp(aux2->polinomio, aux->polinomio)==0){
-                switch(aux->operador){
-                    case '+':
-                        aux->indice = aux->indice+aux2->indice;
-                        break;
-                    case '-':
-                        aux->indice = aux->indice-aux2->indice;
-                        break;
-                    }
-                if (aux2->operador!='\0'){
-                  aux->operador=aux2->operador;
-                }else (aux2->ant)->operador=aux2->operador;
-                excluimonomio(p, aux2);
-                aux2=v;
-            }else{
-                aux2=aux2->prox;
-            }
+            soma(p, &aux, aux2);
+            aux2=v;
         }
         aux=aux->prox;
     }
 }
-}
+
+
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="x*a+3x*y";
+char s[TAM_POLINOMIO]="\0";
 char operadores[100];
 pExpressao x;
-    x=criacelulas(contatermos(s));
-    entrada(s, operadores, &x);
+    scanf("%s", s);
+    while(strcmp(s, "FIM")!=0){
+        x=criacelulas(contatermos(s));
+        entrada(s, operadores, &x);
 //    printf("%c", x->operador);
 //    printf("%d", ((x->prox)->prox)->indice);
 //    printf("%d\n", contalgarismos(10));
@@ -434,14 +422,17 @@ pExpressao x;
 //    printf("%c\n", x->operador);
 //    crialista(x->polinomio, &(x->literais));
 //    crialista(((x->prox)->polinomio), &((x->prox)->literais));
-    listas(&x);
+        listas(&x);
 //    multiplica(&x, &x, x->prox);
 //    printaexpressao(x);
-    atualiza(&x);
+        atualiza(&x);
 //    printaexpressao(x);
 //    arrumanegativos(&x);
-    termosemelhante(&x);
-    printaexpressao(x);
+        termosemelhante(&x);
+        printaexpressao(x);
+        printf("\n");
+        scanf("%s", s);
+    }
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
     return 0;
