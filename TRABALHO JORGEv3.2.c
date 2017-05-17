@@ -59,7 +59,7 @@ int cont=0, i;
 char v[]="+-*";
     for(i=0; i<strlen(c); i++){
         if ((c[i]=='+')||(c[i]=='*')||(c[i]=='-')){
-         // if((i!=0)&&(strchr(v, c[i-1])==NULL))
+          if((i!=0)&&(strchr(v, c[i-1])==NULL))
             cont++;
         }
     }
