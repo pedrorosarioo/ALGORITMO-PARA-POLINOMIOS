@@ -260,7 +260,7 @@ for(LIST=(*p)->literais;LIST!=NULL;LIST=LIST->lprox){
 
 
 
-void entrada(char c[], char *z, pExpressao *x){ // COLOCA INDICE E POLINOMIO NOS ESPAÇOS ALOCADOS
+void entrada(char c[], pExpressao *x){ // COLOCA INDICE E POLINOMIO NOS ESPAÇOS ALOCADOS
 int i, j=0, k=0, l=0, flag=1;
 char v[11], in[11]="\0";
 strcpy(v, "0123456789");
@@ -304,6 +304,7 @@ pExpressao forfree, aux=*x;
             j=0;
             aux->operador=c[i];
             l=0;
+//            printf("Finalizei\n");
             if ((aux->ant)&&((aux->ant)->operador=='-')){
                     (aux->ant)->operador='+';
                     aux->indice=(aux->indice)*(-1);
@@ -409,18 +410,41 @@ aux=*p;
     }
 }
 
+void remove_espaco(char c[]){
+char v[]="0123456789";
+int i, j=0;
+char nova[100], *r;
+    for (i=0; c[i]!='\0'; i++){
+        if (c[i]!=' '){
+            nova[j]=c[i];
+            j++;
+        }
+    }
+    if (strchr(v, nova[j-1])==NULL){ //GARANTE QUE A FUNÇÃO ENCERRE COM UMA CONSTANTE PARA NÃO CRASHAR O WHILE DO MAIN
+        nova[j]='*';
+        j++;
+        nova[j]='1';
+        j++;
+    }
+    nova[j]='\0';
+    strcpy(c, nova);
+//    printf("%s", c);
+}
 
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
 char s[TAM_POLINOMIO]="\0";
-char operadores[100];
 pExpressao x;
+    fflush(stdin);
     scanf("%[^\n]s", s);
+    remove_espaco(s);
+    fflush(stdin);
     while(strcmp(s, "FIM")!=0){
         fflush(stdin);
         x=criacelulas(contatermos(s));
-        entrada(s, operadores, &x);
+//        printf("%s\n", s);
+        entrada(s, &x);
 //    printf("%c", x->operador);
 //    printf("%d", ((x->prox)->prox)->indice);
 //    printf("%d\n", contalgarismos(10));
@@ -438,6 +462,7 @@ pExpressao x;
         printaexpressao(x);
         printf("\n");
         scanf("%[^\n]s", s);
+        remove_espaco(s);
     }
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
