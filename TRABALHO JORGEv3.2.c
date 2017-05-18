@@ -422,13 +422,13 @@ char nova[100], *r;
     }
     nova[j]='\0';
     if (strcmp(nova, "FIM")!=0){ //SE FOR "FIM" NÃO MODIFIQUE
-        if (strchr(v, nova[j-1])==NULL){ //GARANTE QUE A FUNÇÃO ENCERRE COM UMA CONSTANTE PARA NÃO CRASHAR O WHILE DO MAIN
+        //if (strchr(v, nova[j-1])==NULL){ //GARANTE QUE A FUNÇÃO ENCERRE COM UMA CONSTANTE PARA NÃO CRASHAR O WHILE DO MAIN
             nova[j]='*';
             j++;
             nova[j]='1';
             j++;
             nova[j]='\0';
-        }
+        //}
     }
     strcpy(c, nova);
 //    printf("%s", c);
