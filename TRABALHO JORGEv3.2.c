@@ -413,11 +413,12 @@ aux=*p;
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="x^0-9*10";
+char s[TAM_POLINOMIO]="\0";
 char operadores[100];
 pExpressao x;
-    /*scanf("%s", s);
-    while(strcmp(s, "FIM")!=0){*/
+    scanf("%[^\n]s", s);
+    while(strcmp(s, "FIM")!=0){
+        fflush(stdin);
         x=criacelulas(contatermos(s));
         entrada(s, operadores, &x);
 //    printf("%c", x->operador);
@@ -435,9 +436,9 @@ pExpressao x;
 //    arrumanegativos(&x);
         termosemelhante(&x);
         printaexpressao(x);
-        printf("\n");/*
-        scanf("%s", s);
-    }*/
+        printf("\n");
+        scanf("%[^\n]s", s);
+    }
  //   printf("%d", (x->prox)->indice);
 //printf("%d ", test->expoente);
     return 0;
