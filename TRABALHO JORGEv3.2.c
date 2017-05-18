@@ -464,7 +464,7 @@ pExpressao x;
         termosemelhante(&x);
         printaexpressao(x);
         printf("\n");
-        scanf("%[^\n]s", s);
+        scanf(" %[^\n]s", s);
         remove_espaco(s);
     }
  //   printf("%d", (x->prox)->indice);
