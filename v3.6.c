@@ -25,14 +25,14 @@ int sinal;
 }expressao, *pExpressao;
 
 // ------------------------- FUNÇÕES PARA PREENCHER AS ESTRUTURAS ------------------------------------------
-void zerastring(char c[]){
+void zerastring(char c[]){ //PREENCHE A STRING COM \0 PARA EVITAR LIXO DE MEMORIA
 int i;
     for(i=0; i<=TAM_POLINOMIO; i++){
         c[i]='\0';
     }
 }
 
-int criaindice(char a[], int n){
+int criaindice(char a[], int n){ // TRANSFORMA UM NUMERO REPRESENTADO EM CHAR PARA INT
 int i, j=0, r=0;
     for(i=n-1; i>=0; i--){
         r=r+(a[i]-48)*(pow(10,j)+0.1);
@@ -42,7 +42,7 @@ int i, j=0, r=0;
     return r;
 }
 
-void consertaexpoente(Lista *l){
+void consertaexpoente(Lista *l){ // x^nx^n VIRA x^n+1
 Lista aux2, aux=*l;
 int i;
     while(aux!=NULL){
@@ -60,7 +60,7 @@ int i;
     }
 }
 
-int contatermos(char c[]){
+int contatermos(char c[]){ // CONTA QUANTOS OPERANDOS A STRING TEM
 int cont=0, i;
 char v[]="+-*";
     for(i=0; i<strlen(c); i++){
@@ -72,7 +72,7 @@ char v[]="+-*";
 return cont+1;
 }
 
-void limpavariaveis(Lista *l){
+void limpavariaveis(Lista *l){ // LIMPA A LISTA DE VARIAVEIS (PARA EXCLUIR O MONOMIO)
 Lista aux;
 aux=*l;
 if(aux){
@@ -83,7 +83,7 @@ if(aux){
     }
 }
 
-void excluimonomio(pExpressao *p, pExpressao k){
+void excluimonomio(pExpressao *p, pExpressao k){ //EXCLUI UM MONOMIO DE UM POLINOMIO
 pExpressao aux= *p;
 if (aux){
     while (aux->prox!=NULL){
@@ -107,7 +107,7 @@ if (aux){
 }
 }
 
-void InsereLista(Lista *x, Lista n){
+void InsereLista(Lista *x, Lista n){ //INSERE DE FORMA ORDENADA UMA VARIAVEL NA LISTA
 Lista ant=NULL, dep=*x;
 
 if (dep==NULL){
@@ -179,7 +179,7 @@ pExpressao r, origem, aux, aux2;
     return r;
 }
 
-void crialista(char c[1000], Lista *p, pExpressao x){
+void crialista(char c[1000], Lista *p, pExpressao x){ //COM BASE NA AREA "POLINOMIO" DA ESTRUTURA CRIA UMA LISTA DUPLAMENTE ENCADEADA COM UM INT PARA O EXPOENTE E UM CHAR PARA A VARIAVEL
 int i=0, j=0, k, flag=1;
 char *pontchar, auxiliar[100]="", auxiliar2[100]="", v[11]="0123456789";
 Lista aux=*p, novoNo;
@@ -218,7 +218,7 @@ Lista aux=*p, novoNo;
 
 
 
-int contalgarismos(int x){
+int contalgarismos(int x){ // CONTA QUANTOS ALGARISMOS UM NUMERO TEM
 int cont=0;
     while((x/10>0)||(x%10>0)){
         x=x/10;
@@ -227,7 +227,7 @@ int cont=0;
 return cont;
 }
 
-void numpravet(int n, int *v){
+void numpravet(int n, int *v){ // PASSA CADA ALGARISMO DE UM NUMERO PARA UM ESPAÇO DO VETOR
 int i, k, cont=0;
     for(i=contalgarismos(n)-1; i>=0; i--){
         v[i]=n%10;
@@ -237,7 +237,7 @@ int i, k, cont=0;
     }
 }
 
-void update(pExpressao *p){
+void update(pExpressao *p){ // GERA UMA STRING A PARTIR DA LISTA DE VARIAVEIS E JOGA NA AREA POLINOMIO
 int i=0, k=0, j=0, v[100], z;
 char m[1000]="\0";
 Lista LIST;
@@ -406,19 +406,21 @@ Lista aux=r->literais, aux2;
         aux=aux2;
     }
     r->literais=NULL;
-    excluimonomio(p, r);
-    atualiza(p);
+//    excluimonomio(p, r);
+//    atualiza(p);
 }
 
-void soma (pExpressao *p, pExpressao *q, pExpressao r){
+int soma (pExpressao *p, pExpressao *q, pExpressao r){
 Lista aux=r->literais;
-    if (strcmp((*q)->polinomio, r->polinomio)==0){
+    if (strcmp((*q)->polinomio, r->polinomio)!=0) return 0;
+    else{
         if ((*q)->operador == '+') (*q)->indice = (*q)->indice + r->indice;
         else if ((*q)->operador == '-') (*q)->indice = (*q)->indice + r->indice;
         if(r->operador!='\0') (*q)->operador=r->operador;
         else (r->ant)->operador=r->operador;
-        excluimonomio(p, r);
-        atualiza(p);
+//        excluimonomio(p, r);
+//        atualiza(p);
+        return 1;
     }
 }
 
@@ -428,6 +430,7 @@ aux=*p;
 while ((aux)&&(aux->prox != NULL)){
     while (aux->operador=='*'){
         multiplica(p, &aux, aux->prox);
+        excluimonomio(p, aux->prox);
 //        printf("%s\n", aux->polinomio);
     }
     aux=aux->prox;
@@ -437,11 +440,13 @@ aux=*p;
         aux2=aux->prox;
         while (aux2!=NULL){
             v=aux2->prox;
-            soma(p, &aux, aux2);
+            if(soma(p, &aux, aux2)) excluimonomio(p, aux2);
+//            if (strcmp(aux->polinomio, aux2->polinomio)==0) excluimonomio(p, aux2);
             aux2=v;
         }
         aux=aux->prox;
     }
+  atualiza(p);  
 }
 
 void remove_espaco(char c[]){
@@ -467,11 +472,23 @@ char nova[100], *r;
     strcpy(c, nova);
 //    printf("%s", c);
 }
+// --------------------------------------------------------------------------------------
+// ----------------------------------------------- OPERAÇÕES ENTRE POLINOMIOS -----------
+void mul(pExpressao *p, pExpressao *q){ //FALTA TESTAAAAR
+pExpressao aux, aux2, v;
+  for(aux2=*q; aux2!=NULL; aux2=v){
+    for (aux=*p; aux!=NULL; aux=aux->prox){
+      multiplica(p, &aux, aux2);
+    }    
+    v=aux2->prox;
+    excluimonomio(q, aux2);
+  }
+}
 
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="a";
+char s[TAM_POLINOMIO];
 int l;
 pExpressao x;
     fflush(stdin);
