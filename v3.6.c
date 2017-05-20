@@ -382,17 +382,24 @@ pExpressao aux=*p, aux2;
 
 void removezero (pExpressao *p){
 pExpressao aux=*p, aux2;
+int flag=0;
     while (aux){
       aux2 = aux->prox;
       if (aux->indice==0){
+        if (aux==*p) flag=1;
         aux->prox=NULL;
         if (aux->ant) (aux->ant)->operador = aux->operador;
         excluimonomio(p, aux);
+      }
+      if (flag){
+        *p=aux2;
+        flag=0;
       }
       aux=aux2;
   }
   atualiza(p);
 }
+
 
 // ---------------------- FUNÇÕES PARA OPERAR AS ESTRUTURAS ------------------------------
 void multiplica (pExpressao *p, pExpressao *q, pExpressao r){
@@ -446,7 +453,7 @@ aux=*p;
         }
         aux=aux->prox;
     }
-  atualiza(p);  
+    atualiza(p);
 }
 
 void remove_espaco(char c[]){
@@ -474,16 +481,54 @@ char nova[100], *r;
 }
 // --------------------------------------------------------------------------------------
 // ----------------------------------------------- OPERAÇÕES ENTRE POLINOMIOS -----------
+pExpressao copia(pExpressao p){
+int cont=0;
+pExpressao aux, aux2, aux3;
+    for(aux=p; aux!=NULL; aux=aux->prox){
+        cont++;
+    }
+    aux=p;
+    aux2=criacelulas(cont);
+    for(aux3=aux2; aux3!=NULL; aux3=aux3->prox, aux=aux->prox){
+        aux3->indice=aux->indice;
+        strcpy(aux3->polinomio, aux->polinomio);
+        aux3->sinal=aux->sinal;
+        aux3->operador=aux->operador;
+    }
+    listas(&aux2);
+    atualiza(&aux2);
+    return aux2;
+}
+
+pExpressao fim(pExpressao p){
+pExpressao aux=p;
+    while(aux->prox!=NULL) aux=aux->prox;
+    return aux;
+}
+
+void som(pExpressao *p, pExpressao *q){
+pExpressao aux;
+aux=fim(*p);
+aux->operador='+';
+aux->prox=*q;
+*q=NULL;
+//termosemelhante(p);
+atualiza(p);
+//printaexpressao(*p);
+//printf("\n");
+}
+
 void mul(pExpressao *p, pExpressao *q){ //FALTA TESTAAAAR
 pExpressao aux, aux2, v;
   for(aux2=*q; aux2!=NULL; aux2=v){
     for (aux=*p; aux!=NULL; aux=aux->prox){
       multiplica(p, &aux, aux2);
-    }    
+    }
     v=aux2->prox;
     excluimonomio(q, aux2);
   }
 }
+
 
 // ---------------------- MAIN ----------------------------------------------------------
 
