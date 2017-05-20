@@ -24,7 +24,7 @@ NoLista *literais; // Aponta para uma fila com os literais
 int sinal;
 }expressao, *pExpressao;
 
-// ------------------------- FUNÇÕES PARA PREENCHER AS ESTRUTURAS ------------------------------------------
+// ------------------------- FUNÃ‡Ã•ES PARA PREENCHER AS ESTRUTURAS ------------------------------------------
 void zerastring(char c[]){ //PREENCHE A STRING COM \0 PARA EVITAR LIXO DE MEMORIA
 int i;
     for(i=0; i<=TAM_POLINOMIO; i++){
@@ -135,7 +135,7 @@ if (dep==NULL){
 }
 }
 
-pExpressao criacelulas(int n){//cria o espaço para comportar a expressão
+pExpressao criacelulas(int n){//cria o espaÃ§o para comportar a expressÃ£o
 int i, cont=0;
 pExpressao r, origem, aux, aux2;
     for(i=0; i<n; i++){
@@ -227,7 +227,7 @@ int cont=0;
 return cont;
 }
 
-void numpravet(int n, int *v){ // PASSA CADA ALGARISMO DE UM NUMERO PARA UM ESPAÇO DO VETOR
+void numpravet(int n, int *v){ // PASSA CADA ALGARISMO DE UM NUMERO PARA UM ESPAÃ‡O DO VETOR
 int i, k, cont=0;
     for(i=contalgarismos(n)-1; i>=0; i--){
         v[i]=n%10;
@@ -266,7 +266,7 @@ for(LIST=(*p)->literais;LIST!=NULL;LIST=LIST->lprox){
 
 
 
-void entrada(char c[], pExpressao *x){ // COLOCA INDICE E POLINOMIO NOS ESPAÇOS ALOCADOS
+void entrada(char c[], pExpressao *x){ // COLOCA INDICE E POLINOMIO NOS ESPAÃ‡OS ALOCADOS
 int i, j=0, k=0, l=0, flag=1;
 char v[11], in[11]="\0";
 strcpy(v, "0123456789");
@@ -299,7 +299,7 @@ pExpressao forfree, aux=*x;
             //printf("%c\n", c[i]);
             while((c[i]!='+')&&(c[i]!='*')&&(c[i]!='-')&&(c[i]!='\0')){ // COPIA TUDO ATE ACHAR UM OPERADOR
                 aux->polinomio[j]=c[i];
-                if ((c[i]!='^')&&(strchr(v, c[i])==NULL)&&(c[i+1]!='^')){//COLOCA ^1 NOS QUE ESTÃO SEM EXPOENTE
+                if ((c[i]!='^')&&(strchr(v, c[i])==NULL)&&(c[i+1]!='^')){//COLOCA ^1 NOS QUE ESTÃƒO SEM EXPOENTE
                     aux->polinomio[j+1]='^';
                     aux->polinomio[j+2]='1';
                     j=j+2;
@@ -401,7 +401,7 @@ int flag=0;
 }
 
 
-// ---------------------- FUNÇÕES PARA OPERAR AS ESTRUTURAS ------------------------------
+// ---------------------- FUNÃ‡Ã•ES PARA OPERAR AS ESTRUTURAS ------------------------------
 void multiplica (pExpressao *p, pExpressao *q, pExpressao r){
 Lista aux=r->literais, aux2;
     (*q)->indice= (*q)->indice * r->indice;
@@ -483,8 +483,8 @@ char nova[100], *r;
         }
     }
     nova[j]='\0';
-    if (strcmp(nova, "FIM")!=0){ //SE FOR "FIM" NÃO MODIFIQUE
-//        if (strchr(v, nova[j-1])==NULL){ //GARANTE QUE A FUNÇÃO ENCERRE COM UMA CONSTANTE PARA NÃO CRASHAR O WHILE DO MAIN
+    if (strcmp(nova, "FIM")!=0){ //SE FOR "FIM" NÃƒO MODIFIQUE
+//        if (strchr(v, nova[j-1])==NULL){ //GARANTE QUE A FUNÃ‡ÃƒO ENCERRE COM UMA CONSTANTE PARA NÃƒO CRASHAR O WHILE DO MAIN
             nova[j]='*';
             j=j+1;
             nova[j]='1';
@@ -496,7 +496,7 @@ char nova[100], *r;
 //    printf("%s", c);
 }
 // --------------------------------------------------------------------------------------
-// ----------------------------------------------- OPERAÇÕES ENTRE POLINOMIOS -----------
+// ----------------------------------------------- OPERAÃ‡Ã•ES ENTRE POLINOMIOS -----------
 pExpressao copia(pExpressao p){
 int cont=0;
 pExpressao aux, aux2, aux3;
@@ -580,42 +580,6 @@ strcpy(d->polinomio, "\0");
 mul(q, &d);
 som(p, q);
 }
-/*void mul(pExpressao *p, pExpressao *q){ //FALTA TESTAAAAR
-pExpressao aux, aux2, v, cp1, cp2, k, z;
-int flag=1, i=0;
-//cp1=copia(*p);
-  for(v=*q; aux2!=NULL; v=v->prox){
-    for (cp1=copia(*p), aux=cp1; aux!=NULL; aux=aux->prox){
-        z=copia(*q);
-        aux2=salto(i, z);
-        multiplica2(&cp1, &aux, aux2);
-        excluipolinomio(&z);
-    }
-    if (flag){
-        cp2=copia(cp1);
-        flag=0;
-    }else{
-        k->operador='+';
-        k->prox=cp1;
-
-//        printf("\n  \n");
-    }
-    k=fim(cp2);
-//    v=aux2->prox;
-    atualiza(&cp2);
-//    printaexpressao(cp2);
-//    aux2->prox=NULL;
-//    excluimonomio(q, aux2);
-  }
-  excluipolinomio(p);
-    *p=cp2;
- //   printaexpressao(*p);
-//  cp1=NULL;
-//  excluipolinomio(&cp1);
-//  excluipolinomio(q);
-}
-
-*/
 
 // ---------------------- MAIN ----------------------------------------------------------
 
