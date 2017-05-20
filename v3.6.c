@@ -387,7 +387,7 @@ int flag=0;
       aux2 = aux->prox;
       if (aux->indice==0){
         if (aux==*p) flag=1;
-        aux->prox=NULL;
+//        aux->prox=NULL;
         if (aux->ant) (aux->ant)->operador = aux->operador;
         excluimonomio(p, aux);
       }
@@ -415,6 +415,22 @@ Lista aux=r->literais, aux2;
     r->literais=NULL;
 //    excluimonomio(p, r);
 //    atualiza(p);
+}
+
+void multiplica2 (pExpressao *p, pExpressao *q, pExpressao r){
+Lista aux=r->literais, aux2;
+    (*q)->indice= (*q)->indice * r->indice;
+//    (*q)->operador=r->operador;
+    while (aux!=NULL){
+        aux2=aux->lprox;
+        aux->lprox=NULL;
+        InsereLista(&((*q)->literais), aux);
+        aux=aux2;
+//        r->literais=aux2;
+    }
+    r->literais=NULL;
+//    excluimonomio(p, r);
+    atualiza(p);
 }
 
 int soma (pExpressao *p, pExpressao *q, pExpressao r){
