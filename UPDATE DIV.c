@@ -15,6 +15,7 @@ typedef struct NoLista{
 }NoLista, *Lista;
 
 typedef struct termo{
+int invertido;
 int indice; // Guarda o indice, exemplo: 2x, ele guarda o 2
 char polinomio[TAM_POLINOMIO]; // Guarda uma string contendo os termos do monomio, exemplo 2x^2y^2, ele guarda a string "x^2y^2"
 char operador;
@@ -152,6 +153,7 @@ pExpressao r, origem, aux, aux2;
             aux->literais=NULL;
             aux->sinal=0;
             aux->indice=0;
+            aux->invertido=0;
             zerastring(aux->polinomio);
             //printf("%s\n", aux->polinomio);
   //          origem->indice=0;
@@ -169,6 +171,7 @@ pExpressao r, origem, aux, aux2;
             aux2->ant=aux;
             aux2->literais=NULL;
             aux2->sinal=0;
+            aux2->invertido=0;
             aux2->indice=0;
             aux=aux2;
     //        aux2->indice=1;
@@ -512,9 +515,10 @@ char nova[100], *r;
 
 void inverte(pExpressao *p){
 Lista aux;
+(*p)->invertido=1;
   for (aux=(*p)->literais; aux!=NULL; aux=aux->lprox){
     aux->expoente=aux->expoente * -1;
-    printf("%d\n", aux->expoente);
+//    printf("%d\n", aux->expoente);
   }
   atualiza(p);
 }
