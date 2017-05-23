@@ -16,6 +16,7 @@ typedef struct NoLista{
 
 typedef struct termo{
 int invertido;
+char indicec[100];
 int indice; // Guarda o indice, exemplo: 2x, ele guarda o 2
 char polinomio[TAM_POLINOMIO]; // Guarda uma string contendo os termos do monomio, exemplo 2x^2y^2, ele guarda a string "x^2y^2"
 char operador;
@@ -154,6 +155,7 @@ pExpressao r, origem, aux, aux2;
             aux->sinal=0;
             aux->indice=0;
             aux->invertido=0;
+            zerastring(aux->indicec);
             zerastring(aux->polinomio);
             //printf("%s\n", aux->polinomio);
   //          origem->indice=0;
@@ -183,7 +185,7 @@ pExpressao r, origem, aux, aux2;
 }
 
 void crialista(char c[1000], Lista *p, pExpressao x){ //COM BASE NA AREA "POLINOMIO" DA ESTRUTURA CRIA UMA LISTA DUPLAMENTE ENCADEADA COM UM INT PARA O EXPOENTE E UM CHAR PARA A VARIAVEL
-int i=0, j=0, k, flag=1;
+int i=0, j=0, k, flag=1, flag2=0;
 char *pontchar, auxiliar[100]="", auxiliar2[100]="", v[11]="0123456789";
 Lista aux=*p, novoNo;
     for(i=0; c[i]!='\0'; ){
@@ -194,6 +196,10 @@ Lista aux=*p, novoNo;
                 novoNo->variavel=c[i];
                 //printf("%c\n", novoNo->variavel);
                 i=i+2;
+                if(c[i]=='-'){
+                  flag2=1;
+                  i++;
+                }
 //                printf("%c\n", c[i]);
                 pontchar=strchr(v, c[i]);
                 if (pontchar){
@@ -206,7 +212,8 @@ Lista aux=*p, novoNo;
                 }
                 }
 //                printf("%s\n", auxiliar);
-                novoNo->expoente=criaindice(auxiliar, j);
+                if (flag2) novoNo->expoente=criaindice(auxiliar, j) * -1;
+                else novoNo->expoente=criaindice(auxiliar, j);
                 if (novoNo->expoente!=0) InsereLista(p, novoNo);
                 else strcpy(x->polinomio, "\0");
                 for(k=0; k<=j; k++){
@@ -241,6 +248,16 @@ int i, k, cont=0;
     }
 }
 
+void charpranum(int n, char c[]){
+int v[100], k, i=0;
+numpravet(n, v);
+//printf("%d\n", v[0]);
+  for(k=0; k<contalgarismos(n); k++){
+        c[i]=v[k]+'0';
+        i++;
+  }
+  c[i]='\0';
+}
 void update(pExpressao *p){ // GERA UMA STRING A PARTIR DA LISTA DE VARIAVEIS E JOGA NA AREA POLINOMIO
 int i=0, k=0, j=0, v[100], z, flag;
 char m[1000]="\0";
@@ -615,7 +632,7 @@ som(p, q);
 
 int main(){
 char s[TAM_POLINOMIO]="x+1", t[TAM_POLINOMIO]="x-5";
-int l;
+int l=12;
 pExpressao x, y, auxiliar;
     fflush(stdin);
     remove_espaco(s);
