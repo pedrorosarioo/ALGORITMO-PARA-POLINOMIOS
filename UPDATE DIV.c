@@ -248,7 +248,7 @@ int i, k, cont=0;
     }
 }
 
-void charpranum(int n, char c[]){
+void numprachar(int n, char c[]){
 int v[100], k, i=0;
 numpravet(n, v);
 //printf("%d\n", v[0]);
@@ -258,6 +258,7 @@ numpravet(n, v);
   }
   c[i]='\0';
 }
+
 void update(pExpressao *p){ // GERA UMA STRING A PARTIR DA LISTA DE VARIAVEIS E JOGA NA AREA POLINOMIO
 int i=0, k=0, j=0, v[100], z, flag;
 char m[1000]="\0";
@@ -533,6 +534,8 @@ char nova[100], *r;
 void inverte(pExpressao *p){
 Lista aux;
 (*p)->invertido=1;
+numprachar((*p)->indice, (*p)->indicec);
+printf("%s\n",(*p)->indicec);
   for (aux=(*p)->literais; aux!=NULL; aux=aux->lprox){
     aux->expoente=aux->expoente * -1;
 //    printf("%d\n", aux->expoente);
