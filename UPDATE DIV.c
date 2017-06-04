@@ -17,6 +17,7 @@ typedef struct NoLista{
 typedef struct termo{
 int invertido;
 char indicec[100];
+int denominador;
 int indice; // Guarda o indice, exemplo: 2x, ele guarda o 2
 char polinomio[TAM_POLINOMIO]; // Guarda uma string contendo os termos do monomio, exemplo 2x^2y^2, ele guarda a string "x^2y^2"
 char operador;
@@ -154,8 +155,8 @@ pExpressao r, origem, aux, aux2;
             aux->literais=NULL;
             aux->sinal=0;
             aux->indice=0;
-            aux->invertido=0;
-            zerastring(aux->indicec);
+            aux->denominador=1;
+//            zerastring(aux->indicec);
             zerastring(aux->polinomio);
             //printf("%s\n", aux->polinomio);
   //          origem->indice=0;
@@ -173,8 +174,8 @@ pExpressao r, origem, aux, aux2;
             aux2->ant=aux;
             aux2->literais=NULL;
             aux2->sinal=0;
-            aux2->invertido=0;
-            aux2->indice=0;
+            aux2->denominador=1;
+//            aux2->indice=0;
             aux=aux2;
     //        aux2->indice=1;
         }
@@ -182,6 +183,21 @@ pExpressao r, origem, aux, aux2;
 //    printf("%d celulas criadas\n", cont);
     r=origem;
     return r;
+}
+
+pExpressao criadenominador(){
+pExpressao aux;
+    aux=(pExpressao)malloc(sizeof(expressao));
+    if(!aux) exit(1);
+    aux->prox=NULL;
+    aux->ant=NULL;
+    aux->literais=NULL;
+    aux->sinal=0;
+    aux->indice=1;
+    aux->denominador=1;
+    zerastring(aux->polinomio);
+    aux->operador='\0';
+    return aux;
 }
 
 void crialista(char c[1000], Lista *p, pExpressao x){ //COM BASE NA AREA "POLINOMIO" DA ESTRUTURA CRIA UMA LISTA DUPLAMENTE ENCADEADA COM UM INT PARA O EXPOENTE E UM CHAR PARA A VARIAVEL
@@ -386,8 +402,8 @@ pExpressao aux=*p;
 void printaexpressao(pExpressao p){
 pExpressao aux;
   if (p==NULL) printf("0 ");
-  else
-    for (aux=p; aux!=NULL; aux=aux->prox){
+  else{
+    for (aux=p; aux->prox!=NULL; aux=aux->prox){
         if(aux->indice==1){
           if (strcmp(aux->polinomio, "\0")==0){
             printf("%d %c ", aux->indice, aux->operador);
@@ -395,14 +411,28 @@ pExpressao aux;
             printf("%s %c ", aux->polinomio, aux->operador);
           }
         }else{
-          if (strcmp(aux->polinomio, "\0")==0){
-            printf("%d %c ", aux->indice, aux->operador);
-          }else{
-            printf("%d%s %c ", aux->indice, aux->polinomio, aux->operador);
-          }
+            if (strcmp(aux->polinomio, "\0")==0){
+                printf("%d %c ", aux->indice, aux->operador);
+            }else{
+                printf("%d%s %c ", aux->indice, aux->polinomio, aux->operador);
+            }
         }
     }
+    if(aux->indice==1){
+          if (strcmp(aux->polinomio, "\0")==0){
+            printf("%d", aux->indice);
+          }else{
+            printf("%s", aux->polinomio);
+          }
+        }else{
+            if (strcmp(aux->polinomio, "\0")==0){
+                printf("%d", aux->indice);
+            }else{
+                printf("%d%s", aux->indice, aux->polinomio);
+            }
+        }
   }
+}
 
 void excluipolinomio (pExpressao *p){
 pExpressao aux=*p, aux2;
@@ -531,20 +561,21 @@ char nova[100], *r;
 //    printf("%s", c);
 }
 
-void inverte(pExpressao *p){
-Lista aux;
-(*p)->invertido=1;
-numprachar((*p)->indice, (*p)->indicec);
-printf("%s\n",(*p)->indicec);
-  for (aux=(*p)->literais; aux!=NULL; aux=aux->lprox){
-    aux->expoente=aux->expoente * -1;
-//    printf("%d\n", aux->expoente);
-  }
-  atualiza(p);
+int verificad(pExpressao p){ //VERIFICA SE O POLINOMIO É COMPOSTO APENAS PELA CONSTANTE 1
+if ((p->indice==1)&&(p->prox==NULL)&&(p->ant==NULL)&&(strcmp(p->polinomio, "\0")==0)) return 0;
+return 1;
+}
+
+void inverte(pExpressao p[2]){
+pExpressao aux;
+    aux=p[0];
+    p[0]=p[1];
+    p[1]=aux;
 }
 
 // --------------------------------------------------------------------------------------
 // ----------------------------------------------- OPERAÇÕES ENTRE POLINOMIOS -----------
+
 pExpressao copia(pExpressao p){
 int cont=0;
 pExpressao aux, aux2, aux3;
@@ -619,6 +650,16 @@ auxiliar=copia(*p);
   *p=cp2;
 }
 
+void multp(pExpressao p[2], pExpressao q[2]){
+    mul(&p[0], &q[0]);
+    mul(&p[1], &q[1]);
+}
+
+void divp(pExpressao p[2], pExpressao q[2]){
+inverte(q);
+multp(p, q);
+}
+
 void sub(pExpressao *p, pExpressao *q){
 pExpressao d;
 d=criacelulas(1);
@@ -630,45 +671,68 @@ som(p, q);
 }
 
 //void div(pExpressao *p, pExpressao *q);
-
-// ---------------------- MAIN ----------------------------------------------------------
-
-int main(){
-char s[TAM_POLINOMIO]="x+1", t[TAM_POLINOMIO]="x-5";
-int l=12;
-pExpressao x, y, auxiliar;
+//----------------------- GENESIS -------------------------------------------------------
+void cria(pExpressao p[2], char s[]){
     fflush(stdin);
     remove_espaco(s);
     fflush(stdin);
-    x=criacelulas(contatermos(s));
-    entrada(s, &x);
-    listas(&x);
-    atualiza(&x);
-    termosemelhante(&x);
-    removezero(&x);
-    printaexpressao(x);
-    printf("\n");
-/*
-    fflush(stdin);
-    remove_espaco(t);
-    fflush(stdin);
-    y=criacelulas(contatermos(t));
-    entrada(t, &y);
-    listas(&y);
-    atualiza(&y);
-    termosemelhante(&y);
-    removezero(&y);
-    printaexpressao(y);
-    printf("\n");*/
+    p[0]=criacelulas(contatermos(s));
+    p[1]=criadenominador();
+    entrada(s, &p[0]);
+    listas(&p[0]);
+    atualiza(&p[0]);
+    termosemelhante(&p[0]);
+    removezero(&p[0]);
+}
 
-    inverte(&x);
+void clean(pExpressao *p){
+pExpressao aux=copia(*p);
+free(*p);
+*p=aux;
+aux=NULL;
+}
+
+void printapolinomio(pExpressao p[2]){
+    if ((verificad(p[1]))){
+        printf("(");
+        printaexpressao(p[0]);
+        printf(")/(");
+        printaexpressao(p[1]);
+        printf(")");
+    }
+    else{
+        printaexpressao(p[0]);
+    }
+}
+// ---------------------- MAIN ----------------------------------------------------------
+
+int main(){
+char s[TAM_POLINOMIO]="x+y", t[TAM_POLINOMIO]="x-y";
+int l=12;
+pExpressao x[2], y[2], auxiliar;
+    cria(x, s);
+    printaexpressao(x[0]);
+    printf("\n");
+
+    cria(y, t);
+    printaexpressao(y[0]);
+    printf("\n");
+
+//    inverte(x);
+    divp(x, y);
+    clean(&x[0]);
+    termosemelhante(&x[0]);
+    removezero(&x[0]);
+    clean(&x[1]);
+    termosemelhante(&x[1]);
+    //mul(&x[0], &y);
     //auxiliar=x;
     //x=copia(auxiliar);
     //excluipolinomio(&auxiliar);
     //termosemelhante(&x);
     //removezero(&x);
     //printf("%d\n", (x->literais)->expoente);
-    printaexpressao(x);
+    printapolinomio(x);
 
     return 0;
 }
