@@ -482,7 +482,7 @@ Lista aux=r->literais, aux2;
 //    atualiza(p);
 }
 
-void multiplica2 (pExpressao *p, pExpressao *q, pExpressao r){
+void multiplica2 (pExpressao *p, pExpressao *q, pExpressao r){//
 Lista aux=r->literais, aux2;
     (*q)->indice= (*q)->indice * r->indice;
 //    (*q)->operador=r->operador;
@@ -512,7 +512,7 @@ Lista aux=r->literais;
     }
 }
 
-void termosemelhante(pExpressao *p){
+void termosemelhante(pExpressao *p){ //(2x+3y+x*x+4x = x^2+6x+3y)
 pExpressao aux, aux2, v;
 aux=*p;
 while ((aux)&&(aux->prox != NULL)){
@@ -611,23 +611,23 @@ int i;
 
 
 void som(pExpressao *p, pExpressao *q){
-pExpressao aux;
-aux=fim(*p);
-aux->operador='+';
-aux->prox=*q;
-*q=NULL;
-//termosemelhante(p);
-atualiza(p);
-//printaexpressao(*p);
-//printf("\n");
+  pExpressao aux;
+  aux=fim(*p);
+  aux->operador='+';
+  aux->prox=*q;
+  *q=NULL;
+  //termosemelhante(p);
+  atualiza(p);
+  //printaexpressao(*p);
+  //printf("\n");
 }
 
-void mul(pExpressao *p, pExpressao *q){ //FALTA TESTAAAAR
+void mul(pExpressao *p, pExpressao *q){ //multiplica 2 polinomios
 pExpressao aux, aux2, v, auxiliar, k, cp1, cp2, z;
 int i=0, flag=1;
-auxiliar=copia(*p);
+//auxiliar=copia(*p);
   for(v=*q; v!=NULL; v=v->prox){
-    for (cp1=copia(auxiliar), aux=cp1; aux!=NULL; aux=aux->prox){
+    for (cp1=copia(*p), aux=cp1; aux!=NULL; aux=aux->prox){
         z=copia(*q);
         aux2=salto(i, z);
         multiplica2(&cp1, &aux, aux2);
@@ -656,18 +656,45 @@ void multp(pExpressao p[2], pExpressao q[2]){
 }
 
 void divp(pExpressao p[2], pExpressao q[2]){
-inverte(q);
-multp(p, q);
+  inverte(q);
+  multp(p, q);
 }
 
 void sub(pExpressao *p, pExpressao *q){
 pExpressao d;
-d=criacelulas(1);
-d->indice=-1;
-d->sinal=1;
-strcpy(d->polinomio, "\0");
-mul(q, &d);
-som(p, q);
+  d=criacelulas(1);
+  d->indice=-1;
+  d->sinal=1;
+  strcpy(d->polinomio, "\0");
+  mul(q, &d);
+  som(p, q);
+}
+
+void subp(pExpressao p[2], pExpressao q[2]){
+pExpressao aux, aux2, expr_1[2], expr_2[2];
+
+  aux=copia(p[1]);
+  aux2=copia(q[1]);
+  
+  mul(&p[0], &aux2);
+  mul(&q[0], &aux);
+  
+  sub(&p[0], &q[0]);
+  mul(&p[1], &q[1]);
+  
+}
+
+void somp(pExpressao p[2], pExpressao q[2]){
+pExpressao aux, aux2, expr_1[2], expr_2[2];
+
+  aux=copia(p[1]);
+  aux2=copia(q[1]);
+  
+  mul(&p[0], &aux2);
+  mul(&q[0], &aux);
+  
+  som(&p[0], &q[0]);
+  mul(&p[1], &q[1]);  
 }
 
 //void div(pExpressao *p, pExpressao *q);
@@ -707,7 +734,7 @@ void printapolinomio(pExpressao p[2]){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="x+y", t[TAM_POLINOMIO]="x-y";
+char s[TAM_POLINOMIO]="1+y", t[TAM_POLINOMIO]="x+y";
 int l=12;
 pExpressao x[2], y[2], auxiliar;
     cria(x, s);
@@ -718,8 +745,9 @@ pExpressao x[2], y[2], auxiliar;
     printaexpressao(y[0]);
     printf("\n");
 
-//    inverte(x);
-    divp(x, y);
+    inverte(x);
+    inverte(x);
+    //somp(x, y);
     clean(&x[0]);
     termosemelhante(&x[0]);
     removezero(&x[0]);
