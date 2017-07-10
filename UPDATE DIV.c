@@ -410,6 +410,12 @@ pExpressao aux;
           }else{
             printf("%s %c ", aux->polinomio, aux->operador);
           }
+        }else if(aux->indice==-1){
+          if (strcmp(aux->polinomio, "\0")==0){
+            printf("-%d %c ", aux->indice, aux->operador);
+          }else{
+            printf("-%s %c ", aux->polinomio, aux->operador);
+          }
         }else{
             if (strcmp(aux->polinomio, "\0")==0){
                 printf("%d %c ", aux->indice, aux->operador);
@@ -424,13 +430,19 @@ pExpressao aux;
           }else{
             printf("%s", aux->polinomio);
           }
-        }else{
-            if (strcmp(aux->polinomio, "\0")==0){
-                printf("%d", aux->indice);
-            }else{
-                printf("%d%s", aux->indice, aux->polinomio);
-            }
-        }
+    }else if(aux->indice==-1){
+          if (strcmp(aux->polinomio, "\0")==0){
+            printf("-%d", aux->indice);
+          }else{
+            printf("-%s", aux->polinomio);
+          }
+    }else{
+          if (strcmp(aux->polinomio, "\0")==0){
+            printf("%d", aux->indice);
+          }else{
+            printf("%d%s", aux->indice, aux->polinomio);
+          }
+    }
   }
 }
 
@@ -734,7 +746,7 @@ void printapolinomio(pExpressao p[2]){
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="1+y", t[TAM_POLINOMIO]="x+y";
+char s[TAM_POLINOMIO]="-x", t[TAM_POLINOMIO]="x+y";
 int l=12;
 pExpressao x[2], y[2], auxiliar;
     cria(x, s);
@@ -745,9 +757,9 @@ pExpressao x[2], y[2], auxiliar;
     printaexpressao(y[0]);
     printf("\n");
 
-    inverte(x);
-    inverte(x);
-    //somp(x, y);
+    //inverte(x);
+    //inverte(x);
+    subp(x, y);
     clean(&x[0]);
     termosemelhante(&x[0]);
     removezero(&x[0]);
