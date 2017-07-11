@@ -892,10 +892,8 @@ char s[TAM_POLINOMIO];
 
 int main(){
 char s[TAM_POLINOMIO]="1", t[TAM_POLINOMIO]="1";
-int l=12;
 pExpressao x[2], y[2];
-cria(x, s);
-cria(y, t);
-  
-  OP_inicial(x,y);
+    cria(x, s);
+    cria(y, t);
+    OP_inicial(x,y);
 }
