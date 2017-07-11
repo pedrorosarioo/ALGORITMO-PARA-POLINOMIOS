@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+//#include <conio.c>
 
 #define TAM_POLINOMIO 1000
 
+int flag=1;
 // ------------------------------ ESTRUTURAS ----------------------------------------------
 
 typedef struct NoLista{
@@ -28,6 +30,7 @@ int sinal;
 }expressao, *pExpressao;
 
 // ------------------------- FUNÇÕES PARA PREENCHER AS ESTRUTURAS ------------------------------------------
+
 void zerastring(char c[]){ //PREENCHE A STRING COM \0 PARA EVITAR LIXO DE MEMORIA
 int i;
     for(i=0; i<=TAM_POLINOMIO; i++){
@@ -574,15 +577,19 @@ char nova[100], *r;
 }
 
 int verificad(pExpressao p){ //VERIFICA SE O POLINOMIO É COMPOSTO APENAS PELA CONSTANTE 1
-if ((p->indice==1)&&(p->prox==NULL)&&(p->ant==NULL)&&(strcmp(p->polinomio, "\0")==0)) return 0;
-return 1;
+  if(p){
+    if ((p->indice==1)&&(p->prox==NULL)&&(p->ant==NULL)&&(strcmp(p->polinomio, "\0")==0)) return 0;
+    return 1;
+  }
 }
 
 void inverte(pExpressao p[2]){
 pExpressao aux;
     aux=p[0];
-    p[0]=p[1];
-    p[1]=aux;
+    if (aux->indice!=0){
+      p[0]=p[1];
+      p[1]=aux;
+    }
 }
 
 // --------------------------------------------------------------------------------------
@@ -694,6 +701,9 @@ pExpressao aux, aux2, expr_1[2], expr_2[2];
   sub(&p[0], &q[0]);
   mul(&p[1], &q[1]);
   
+  atualiza(&p[0]);
+  atualiza(&p[1]);
+  
 }
 
 void somp(pExpressao p[2], pExpressao q[2]){
@@ -731,6 +741,15 @@ free(*p);
 aux=NULL;
 }
 
+void refresh(pExpressao p[2]){
+  clean(&p[0]);
+  termosemelhante(&p[0]);
+  removezero(&p[0]);
+  clean(&p[1]);
+  termosemelhante(&p[1]);
+  removezero(&p[1]);
+}
+
 void printapolinomio(pExpressao p[2]){
     if ((verificad(p[1]))){
         printf("(");
@@ -743,36 +762,140 @@ void printapolinomio(pExpressao p[2]){
         printaexpressao(p[0]);
     }
 }
+
+// ----------------------------- MENU ---------------------------------------------------------
+
+void menu_altera_Acumulador(pExpressao p[2], int i){
+  system("cls");
+  printf("                             A%d: ", i);
+  printapolinomio(p);
+  printf("\n");
+  printf("\n");
+  printf("                            SELECIONE A OPÇÃO:\n");
+  printf("\n");
+  printf("                          [1] Sobrescrever                       \n");
+  printf("                          [2] Somar\n");
+  printf("                          [3] Subtrair\n");
+  printf("                          [4] Multiplicar                       \n");
+  printf("                          [5] Dividir\n");
+  printf("                          [6] Inverter\n");
+  printf("                          [7] Retornar\n");
+  printf("\n");
+}
+
+void OP_altera_Acumulador(pExpressao p[2], int i){
+int OP;
+pExpressao aux[2];
+char s[TAM_POLINOMIO];
+  scanf("%d", &OP);
+  
+  while (OP!=7){
+    
+    if (OP==1){
+      excluipolinomio(&p[0]);
+      excluipolinomio(&p[1]);
+      printf("Digite a expressao: ");
+      scanf(" %[^\n]s", s);
+      fflush(stdin);
+      cria(p, s);
+      menu_altera_Acumulador(p, i);
+    
+    }else if(OP==2){
+      printf("Digite a expressao que você deseja somar: ");
+      scanf(" %[^\n]s", s);
+      fflush(stdin);
+      cria(aux, s);
+      somp(p, aux);
+      refresh(p);
+      menu_altera_Acumulador(p, i);
+    }else if(OP==3){
+      printf("Digite a expressao que você deseja subtrair: ");
+      scanf(" %[^\n]s", s);
+      fflush(stdin);
+      cria(aux, s);
+      subp(p, aux);
+      refresh(p);
+      menu_altera_Acumulador(p, i);
+      
+    }else if(OP==4){
+      printf("Digite a expressao que você deseja subtrair: ");
+      scanf(" %[^\n]s", s);
+      fflush(stdin);
+      cria(aux, s);
+      multp(p, aux);
+      refresh(p);
+      menu_altera_Acumulador(p, i);
+    
+    }else if(OP==5){
+      printf("Digite a expressao que você deseja subtrair: ");
+      scanf(" %[^\n]s", s);
+      fflush(stdin);
+      cria(aux, s);
+      divp(p, aux);
+      refresh(p);
+      menu_altera_Acumulador(p, i);
+  
+    }else if(OP==6){
+      inverte(p);
+      menu_altera_Acumulador(p, i);
+    }
+  scanf("%d", &OP);  
+  }
+}
+
+void menu_inicial(pExpressao p[2], pExpressao q[2]){
+  system("cls");
+  //textcolor(3);
+  printf("==============================================================================\n");
+  printf("                            CALCULADORA DE POLINOMIOS                        \n");
+  printf("==============================================================================\n");
+  printf("\n");
+  printf("                             A1: ");
+  printapolinomio(p);
+  printf("\n");
+  printf("\n");
+  printf("                             A2: ");
+  printapolinomio(q);
+  printf("\n");
+  printf("\n");
+  printf("                            SELECIONE A OPÇÃO:\n");
+  printf("\n");
+  printf("                          [1] Alterar acumulador 1                       \n");
+  printf("                          [2] Alterar acumulador 2                       \n");
+  printf("                          [3] Sair do sistema                            \n");
+  printf("\n");
+}
+
+void OP_inicial(pExpressao p[2], pExpressao q[2]){
+int OP;
+int i;
+pExpressao aux[2];
+char s[TAM_POLINOMIO];
+  
+  menu_inicial(p,q);
+  scanf("%d", &OP);
+  
+  while (OP!=3){
+    if (OP==1){
+        menu_altera_Acumulador(p, OP);
+        OP_altera_Acumulador(p, OP);
+    }else if (OP==2){ 
+        menu_altera_Acumulador(q, OP);
+        OP_altera_Acumulador(q, OP);
+    }
+    menu_inicial(p,q);
+    scanf("%d", &OP);
+  }
+}
+
 // ---------------------- MAIN ----------------------------------------------------------
 
 int main(){
-char s[TAM_POLINOMIO]="-x", t[TAM_POLINOMIO]="x+y";
+char s[TAM_POLINOMIO]="1", t[TAM_POLINOMIO]="1";
 int l=12;
-pExpressao x[2], y[2], auxiliar;
-    cria(x, s);
-    printaexpressao(x[0]);
-    printf("\n");
-
-    cria(y, t);
-    printaexpressao(y[0]);
-    printf("\n");
-
-    //inverte(x);
-    //inverte(x);
-    subp(x, y);
-    clean(&x[0]);
-    termosemelhante(&x[0]);
-    removezero(&x[0]);
-    clean(&x[1]);
-    termosemelhante(&x[1]);
-    //mul(&x[0], &y);
-    //auxiliar=x;
-    //x=copia(auxiliar);
-    //excluipolinomio(&auxiliar);
-    //termosemelhante(&x);
-    //removezero(&x);
-    //printf("%d\n", (x->literais)->expoente);
-    printapolinomio(x);
-
-    return 0;
+pExpressao x[2], y[2];
+cria(x, s);
+cria(y, t);
+  
+  OP_inicial(x,y);
 }
