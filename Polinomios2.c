@@ -816,23 +816,20 @@ char s[TAM_POLINOMIO];
     if (OP=='1'){
         aux[0]=copia(q[0]);
         aux[1]=copia(q[1]);
-        somp(p,q);
-        q=aux;
+        somp(p,aux);
         refresh(p);
         menu_opera_Acumuladores(p, q);
 
     }else if(OP=='2'){
         aux[0]=copia(q[0]);
         aux[1]=copia(q[1]);
-        subp(p,q);
-        q=aux;
+        subp(p,aux);
         refresh(p);
         menu_opera_Acumuladores(p, q);
     }else if(OP=='3'){
         aux[0]=copia(q[0]);
         aux[1]=copia(q[1]);
-        multp(p,q);
-        q=aux;
+        multp(p,aux);
         refresh(p);
         menu_opera_Acumuladores(p, q);
 
